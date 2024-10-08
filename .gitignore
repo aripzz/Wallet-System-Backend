@@ -1,0 +1,5 @@
+app.log
+/tmp
+/logs
+/bin
+.env

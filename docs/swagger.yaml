@@ -1,0 +1,522 @@
+basePath: /
+definitions:
+  entity.CreateProducts:
+    properties:
+      name:
+        type: string
+      price:
+        type: number
+      quantity:
+        type: integer
+    required:
+    - name
+    - price
+    - quantity
+    type: object
+  entity.CreateWallets:
+    properties:
+      active:
+        type: boolean
+      balance:
+        type: number
+      user_id:
+        type: integer
+      wallet_types_id:
+        type: integer
+    type: object
+  entity.Products:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      price:
+        type: number
+      quantity:
+        type: integer
+    type: object
+  entity.RequestCreateTransactions:
+    properties:
+      product_id:
+        type: integer
+      wallet_type_id:
+        type: integer
+    required:
+    - product_id
+    - wallet_type_id
+    type: object
+  entity.Transactions:
+    properties:
+      amount:
+        type: number
+      id:
+        type: integer
+      product_id:
+        type: integer
+      status:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  entity.UpdateProducts:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      price:
+        type: number
+      quantity:
+        type: integer
+    required:
+    - id
+    type: object
+  entity.UpdateWallets:
+    properties:
+      active:
+        type: boolean
+      balance:
+        type: number
+      id:
+        type: integer
+      user_id:
+        type: integer
+      wallet_types_id:
+        type: integer
+    required:
+    - id
+    type: object
+  entity.UserLogin:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  entity.Wallets:
+    properties:
+      active:
+        type: boolean
+      balance:
+        type: number
+      id:
+        type: integer
+      user_id:
+        type: integer
+      wallet_types_id:
+        type: integer
+    type: object
+  helpers.StandardResponse:
+    properties:
+      data: {}
+      message:
+        type: string
+      status:
+        type: integer
+    type: object
+host: localhost:3000
+info:
+  contact: {}
+  description: API documentation for Wallet System backend.
+  title: Wallet System API
+  version: "1.0"
+paths:
+  /api/v1/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate a user and return a JWT token
+      parameters:
+      - description: Login
+        in: body
+        name: login
+        required: true
+        schema:
+          $ref: '#/definitions/entity.UserLogin'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/helpers.StandardResponse'
+            type: array
+      summary: User Login
+      tags:
+      - Login
+  /api/v1/products:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all products
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Products'
+      security:
+      - BearerAuth: []
+      summary: Get all products
+      tags:
+      - products
+    post:
+      consumes:
+      - application/json
+      description: Add a new product to the database
+      parameters:
+      - description: Product data
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/entity.CreateProducts'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Product created
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Create a new product
+      tags:
+      - products
+  /api/v1/products/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a product by ID
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Product deleted
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Delete a product
+      tags:
+      - products
+    get:
+      consumes:
+      - application/json
+      description: Get a single product by ID
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Products'
+      security:
+      - BearerAuth: []
+      summary: Get a product by ID
+      tags:
+      - products
+    patch:
+      consumes:
+      - application/json
+      description: Update a product's data
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Product data
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/entity.UpdateProducts'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Product updated successfully
+          schema:
+            $ref: '#/definitions/helpers.StandardResponse'
+        "400":
+          description: Invalid ID or request body
+          schema:
+            $ref: '#/definitions/helpers.StandardResponse'
+        "404":
+          description: Data not found
+          schema:
+            $ref: '#/definitions/helpers.StandardResponse'
+      security:
+      - BearerAuth: []
+      summary: Update an existing product
+      tags:
+      - products
+    put:
+      consumes:
+      - application/json
+      description: Update a product's data
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Product data
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/entity.Products'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Product updated
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Update an existing product
+      tags:
+      - products
+  /api/v1/transactions:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all transactions
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entity.Transactions'
+            type: array
+      security:
+      - BearerAuth: []
+      summary: Get all transactions
+      tags:
+      - transactions
+    post:
+      consumes:
+      - application/json
+      description: Create a new transaction
+      parameters:
+      - description: Transaction data
+        in: body
+        name: transaction
+        required: true
+        schema:
+          $ref: '#/definitions/entity.RequestCreateTransactions'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/helpers.StandardResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a new transaction
+      tags:
+      - transactions
+  /api/v1/transactions/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a transaction by its ID
+      parameters:
+      - description: Transaction ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+      security:
+      - BearerAuth: []
+      summary: Delete a transaction
+      tags:
+      - transactions
+    get:
+      consumes:
+      - application/json
+      description: Get a transaction by its ID
+      parameters:
+      - description: Transaction ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Transactions'
+      security:
+      - BearerAuth: []
+      summary: Get transaction by ID
+      tags:
+      - transactions
+  /api/v1/users/transactions-user:
+    get:
+      consumes:
+      - application/json
+      description: Get transactions for a specific user by their ID
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entity.Transactions'
+            type: array
+      security:
+      - BearerAuth: []
+      summary: Get transactions by user ID
+      tags:
+      - transactions
+  /api/v1/wallets:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all wallets
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entity.Wallets'
+            type: array
+      security:
+      - BearerAuth: []
+      summary: Get all wallets
+      tags:
+      - wallets
+    post:
+      consumes:
+      - application/json
+      description: Create a new wallet
+      parameters:
+      - description: Wallet data
+        in: body
+        name: wallet
+        required: true
+        schema:
+          $ref: '#/definitions/entity.CreateWallets'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/entity.Wallets'
+      security:
+      - BearerAuth: []
+      summary: Create a new wallet
+      tags:
+      - wallets
+  /api/v1/wallets/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a wallet by its ID
+      parameters:
+      - description: Wallet ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+      security:
+      - BearerAuth: []
+      summary: Delete a wallet
+      tags:
+      - wallets
+    get:
+      consumes:
+      - application/json
+      description: Get a wallet by its ID
+      parameters:
+      - description: Wallet ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Wallets'
+      security:
+      - BearerAuth: []
+      summary: Get wallet by ID
+      tags:
+      - wallets
+    put:
+      consumes:
+      - application/json
+      description: Update a wallet by its ID
+      parameters:
+      - description: Wallet ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Updated wallet data
+        in: body
+        name: wallet
+        required: true
+        schema:
+          $ref: '#/definitions/entity.UpdateWallets'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Wallets'
+      security:
+      - BearerAuth: []
+      summary: Update a wallet
+      tags:
+      - wallets
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
