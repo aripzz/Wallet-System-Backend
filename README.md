@@ -17,7 +17,7 @@ Explain how to use the project and provide examples.
    Clone repositori:
 
    ```shell
-   git clone https://github.com/aripzz/Wallet System
+   git clone https://github.com/aripzz/Wallet-System-Backend
    cd Wallet System
     ```
 
